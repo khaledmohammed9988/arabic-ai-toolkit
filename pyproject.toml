@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arabic-ai-toolkit"
+version = "0.1.0"
+description = "Reproducible Arabic text normalization and AI evaluation utilities"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "Khaled Mohammed"}]
+
+[project.scripts]
+arabic-ai-eval = "arabic_ai_toolkit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
