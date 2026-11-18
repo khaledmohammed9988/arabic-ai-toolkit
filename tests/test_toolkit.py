@@ -1,3 +1,6 @@
+from pathlib import Path
+import subprocess
+import sys
 import unittest
 
 from arabic_ai_toolkit.evaluation import evaluate_case, evaluate_cases
@@ -42,6 +45,30 @@ class EvaluationTests(unittest.TestCase):
     def test_missing_fields_raise_clear_error(self):
         with self.assertRaisesRegex(ValueError, "reference and prediction"):
             evaluate_cases([{"id": "x", "reference": "اختبار"}])
+
+    def test_rejects_non_string_reference_or_prediction(self):
+        valid = {"reference": "اختبار", "prediction": "اختبار"}
+        for field in valid:
+            for bad_value in (None, 42, True, [], {}):
+                with self.subTest(field=field, value=bad_value):
+                    malformed = {**valid, field: bad_value}
+                    with self.assertRaisesRegex(
+                        ValueError, rf"case 2.*{field} must be a string"
+                    ):
+                        evaluate_cases([valid, malformed])
+
+    def test_cli_rejects_malformed_rows_before_printing_scores(self):
+        path = Path(__file__).parent / "fixtures" / "non_text_prediction.jsonl"
+        result = subprocess.run(
+            [sys.executable, "-m", "arabic_ai_toolkit.cli", str(path)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, "")
+        self.assertIn("case 2 prediction must be a string", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
 
 
 if __name__ == "__main__":

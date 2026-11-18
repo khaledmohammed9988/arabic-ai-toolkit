@@ -34,8 +34,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
-    args = build_parser().parse_args()
-    summary = evaluate_cases(read_jsonl(args.input))
+    parser = build_parser()
+    args = parser.parse_args()
+    try:
+        summary = evaluate_cases(read_jsonl(args.input))
+    except ValueError as exc:
+        parser.error(str(exc))
     print(json.dumps(summary.to_dict(args.details), ensure_ascii=False, indent=2))
 
 

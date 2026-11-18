@@ -29,6 +29,10 @@ Example input:
 {"id":"case-2","reference":"تحليل البيانات","prediction":"تحليل بيانات"}
 ```
 
+Each case must contain string values for `reference` and `prediction`. Use
+`""` for a blank response. An invalid case stops evaluation before any scores
+are printed.
+
 Example output:
 
 ```json
