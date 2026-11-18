@@ -77,14 +77,13 @@ def evaluate_cases(
     for index, case in enumerate(cases, start=1):
         if "reference" not in case or "prediction" not in case:
             raise ValueError(f"case {index} must include reference and prediction")
-        scores.append(
-            evaluate_case(
-                str(case.get("id", index)),
-                str(case["reference"]),
-                str(case["prediction"]),
-                options,
-            )
-        )
+        reference = case["reference"]
+        prediction = case["prediction"]
+        if not isinstance(reference, str):
+            raise ValueError(f"case {index} reference must be a string")
+        if not isinstance(prediction, str):
+            raise ValueError(f"case {index} prediction must be a string")
+        scores.append(evaluate_case(str(case.get("id", index)), reference, prediction, options))
 
     if not scores:
         return EvaluationSummary(0, 0.0, 0.0, 0.0, 0.0, ())
